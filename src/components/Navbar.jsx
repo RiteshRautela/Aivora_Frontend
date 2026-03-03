@@ -1,4 +1,16 @@
+import axios from "axios"
+import { Base_Url } from "../utils/constant"
+import { useNavigate } from "react-router-dom";
 function Navbar() {
+
+const navigate = useNavigate();
+
+
+  const handleLogout  = async() =>{
+      await axios.post(Base_Url + "/logout", {} ,{withCredentials:true})
+      //  when user logged out redirect user to Landingpage 
+      navigate("/")
+  }
   return (
     <>
    <div className="navbar bg-gradient-to-b from-black/90 to-transparent text-neutral-content">
@@ -21,7 +33,8 @@ function Navbar() {
       <ul
         tabIndex="-1"
         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li><a>Logout</a></li>
+        
+        <li><a onClick={handleLogout}>Logout</a></li>
 
       </ul>
     </div>
