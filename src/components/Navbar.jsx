@@ -1,6 +1,7 @@
 import axios from "axios"
 import { Base_Url } from "../utils/constant"
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 function Navbar() {
 
 const navigate = useNavigate();
@@ -34,7 +35,12 @@ const navigate = useNavigate();
         tabIndex="-1"
         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
         
-        <li><a onClick={handleLogout}>Logout</a></li>
+       
+        <li>
+          <Link to="dashboard">Dash</Link>
+        </li>
+        <li> <Link to="editor">Edit</Link></li>
+         <li><a onClick={handleLogout}>Logout</a></li>
 
       </ul>
     </div>
