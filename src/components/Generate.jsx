@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Base_Url } from "../utils/constant";
 function Generate() {
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState("Generate a calculator");
 
 
   const handleGenerate = async() =>{
