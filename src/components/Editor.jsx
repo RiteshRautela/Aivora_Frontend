@@ -5,13 +5,14 @@ import Header from "./Header";
 import Chat from "./Chat";
 import Spinner from "./Spinner";
 
+// 🔥 Monaco Editor
+import EditorMonaco from "@monaco-editor/react";
+
 import { Rocket, MessageSquare, Code2, Monitor } from "lucide-react";
 
 const Editor = () => {
-  // const id = "69b932bc37fcfab5167f6c42";
-  // const id = "69b94e7010ab332b4c3aaf31";
+  // 🔥 TEMP HARDCODE ID (later dynamic)
   const id = "69b94eff10ab332b4c3aaf46";
- 
 
   const [website, setWebsite] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -21,6 +22,9 @@ const Editor = () => {
 
   const [updateLoading, setUpdateLoading] = useState(false);
   const [thinkingIndex, setThinkingIndex] = useState(0);
+
+  // 🔥 toggle preview / code
+  const [showCode, setShowCode] = useState(false);
 
   const iframeRef = useRef(null);
 
@@ -32,7 +36,7 @@ const Editor = () => {
     "Finalizing update…",
   ];
 
-  // FETCH
+  // 🔥 FETCH WEBSITE
   useEffect(() => {
     const getWebsite = async () => {
       try {
@@ -50,27 +54,18 @@ const Editor = () => {
     getWebsite();
   }, [id]);
 
-  // IFRAME UPDATE
-// useEffect(() => {
-//   if (!iframeRef.current) return;
-
-//   // if no code → clear iframe
-//   if (!code) {
-//     iframeRef.current.srcdoc = "";
-//     return;
-//   }
-
-//   // directly inject HTML (simpler + faster than blob)
-//   iframeRef.current.srcdoc = code;
-
-// }, [code]);
-useEffect(() => {
+  // 🔥 UPDATE IFRAME
+ useEffect(() => {
   if (!iframeRef.current) return;
 
-  iframeRef.current.srcdoc = code || "";
-}, [code]);
+  // 🔥 force reload iframe every time preview is visible
+  if (!showCode) {
+    iframeRef.current.srcdoc = code || "";
+  }
 
-  // THINKING LOOP
+}, [code, showCode]);
+
+  // 🔥 THINKING LOOP
   useEffect(() => {
     if (!updateLoading) return;
 
@@ -81,7 +76,7 @@ useEffect(() => {
     return () => clearInterval(i);
   }, [updateLoading]);
 
-  // UPDATE
+  // 🔥 UPDATE WEBSITE
   const handleUpdate = async () => {
     if (!prompt) return;
 
@@ -111,11 +106,11 @@ useEffect(() => {
     }
   };
 
-  // DEPLOY
+  // 🔥 DEPLOY
   const handleDeploy = async () => {
     try {
       const res = await axios.get(
-        Base_Url + "/deploy/" + website._id,
+        Base_Url + "/deploy/" + id,
         { withCredentials: true }
       );
       window.open(res.data.url, "_blank");
@@ -173,7 +168,11 @@ useEffect(() => {
               <MessageSquare size={18} />
             </button>
 
-            <button className="p-2">
+            {/* 🔥 TOGGLE CODE VIEW */}
+            <button
+              className="p-2"
+              onClick={() => setShowCode((prev) => !prev)}
+            >
               <Code2 size={18} />
             </button>
 
@@ -183,13 +182,32 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* PREVIEW */}
+        {/* 🔥 PREVIEW / CODE */}
         <div className="flex-1 bg-black">
-          <iframe
-            ref={iframeRef}
-            sandbox="allow-scripts allow-same-origin allow-forms"
-            className="w-full h-full bg-white"
-          />
+
+          {showCode ? (
+            // 🔥 CODE VIEW (MONACO)
+            <EditorMonaco
+              height="100%"
+              defaultLanguage="html"
+              value={code}
+              theme="vs-dark"
+              onChange={(value) => setCode(value)} // 🔥 live edit
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                wordWrap: "on",
+              }}
+            />
+          ) : (
+            // 🔥 LIVE PREVIEW
+            <iframe
+              ref={iframeRef}
+              sandbox="allow-scripts allow-same-origin allow-forms"
+              className="w-full h-full bg-white"
+            />
+          )}
+
         </div>
       </div>
     </div>
