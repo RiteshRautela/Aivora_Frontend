@@ -8,6 +8,7 @@ import Generate from "./components/Generate";
 import HomeHero from "./components/HomeHero";
 import  NotFoundPage from "./components/NotFoundPage"
 import Editor from "./components/Editor"
+import LiveSite from "./components/LiveSite";
 import appstore from "./utils/appstore";
 import { Provider } from "react-redux";
 
@@ -36,7 +37,9 @@ function App() {
             <Route path="dashboard" element={<Dashboard/> } />
             <Route path="generate" element={<Generate />} />
             <Route path="editor" element={<Editor />} />
+            <Route path="editor/:id" element={<Editor />} />
           </Route>
+          <Route path="/live/:slug" element={<LiveSite />} />
           <Route path="*" element={< NotFoundPage/>} />
         </Routes>
 
