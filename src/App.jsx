@@ -9,6 +9,7 @@ import HomeHero from "./components/HomeHero";
 import  NotFoundPage from "./components/NotFoundPage"
 import Editor from "./components/Editor"
 import LiveSite from "./components/LiveSite";
+import Pricing from "./components/Pricing";
 import appstore from "./utils/appstore";
 import { Provider } from "react-redux";
 
@@ -24,7 +25,6 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
-
           <Route
             path="/home"
             element={
@@ -38,8 +38,10 @@ function App() {
             <Route path="generate" element={<Generate />} />
             <Route path="editor" element={<Editor />} />
             <Route path="editor/:id" element={<Editor />} />
+            <Route path="price" element={<Pricing />} /> 
           </Route>
           <Route path="/live/:slug" element={<LiveSite />} />
+          
           <Route path="*" element={< NotFoundPage/>} />
         </Routes>
 

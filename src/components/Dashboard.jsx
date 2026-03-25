@@ -51,9 +51,19 @@ function Dashboard() {
         withCredentials: true,
       });
 
-      const liveRoute = getLiveRoute(res.data.url);
+      setWebsites((prev) =>
+        prev.map((website) =>
+          website._id === id
+            ? {
+                ...website,
+                deployed: true,
+                deployurl: res.data.url,
+              }
+            : website
+        )
+      );
 
-      await handleGetAllWebsite();
+      const liveRoute = getLiveRoute(res.data.url);
 
       if (liveRoute) {
         navigate(liveRoute);
@@ -65,7 +75,10 @@ function Dashboard() {
 
   // 🔥 COPY LINK
   const handleCopy = async (site) => {
-    await navigator.clipboard.writeText(site.deployUrl);
+    const shareUrl =
+      site.deployurl || `${window.location.origin}/live/${site.slug}`;
+
+    await navigator.clipboard.writeText(shareUrl);
     setCopiedId(site._id);
     setTimeout(() => setCopiedId(null), 2000);
   };

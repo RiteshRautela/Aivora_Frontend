@@ -40,6 +40,7 @@ const navigate = useNavigate();
           <Link to="dashboard">Dash</Link>
         </li>
         <li> <Link to="editor">Edit</Link></li>
+        <li> <Link to="price">Pricing</Link></li>
          <li><a onClick={handleLogout}>Logout</a></li>
 
       </ul>
