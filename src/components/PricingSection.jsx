@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useSpring } from "framer-motion";
+import axios from "axios";
 import React, {
   createContext,
   forwardRef,
@@ -17,6 +18,7 @@ import { Link } from "react-router-dom";
 import { cva } from "class-variance-authority";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Base_Url } from "../utils/constant";
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -184,7 +186,39 @@ function InteractiveStarfield({ mousePosition, containerRef }) {
 const PricingContext = createContext({
   isMonthly: true,
   setIsMonthly: () => {},
+  loadingPlan: null,
+  status: null,
+  handlePlanSelect: async () => {},
 });
+
+// Razorpay checkout script loader.
+async function loadRazorpayScript() {
+  if (window.Razorpay) {
+    return true;
+  }
+
+  return new Promise((resolve) => {
+    const existingScript = document.querySelector(
+      'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+    );
+
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve(true), {
+        once: true,
+      });
+      existingScript.addEventListener("error", () => resolve(false), {
+        once: true,
+      });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 export function PricingSection({
   plans,
@@ -194,9 +228,117 @@ export function PricingSection({
   const [isMonthly, setIsMonthly] = useState(true);
   const containerRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: null, y: null });
+  const [loadingPlan, setLoadingPlan] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [credits, setCredits] = useState(null);
+
+  const handlePlanSelect = async (selectedPlan) => {
+    // Free plan skips payment flow.
+    if (selectedPlan.plan === "free") {
+      return;
+    }
+
+    setLoadingPlan(selectedPlan.plan);
+    setStatus(null);
+
+    try {
+      // Create payment order on backend using only the selected plan id.
+      const { data } = await axios.post(
+        `${Base_Url}/payment/create`,
+        {
+          plan: selectedPlan.plan,
+          billingCycle: isMonthly ? "monthly" : "annual",
+        },
+        { withCredentials: true },
+      );
+
+      const { keyId, orderId, amount, currency, plan, credits: planCredits } =
+        data;
+
+      const isScriptLoaded = await loadRazorpayScript();
+
+      if (!isScriptLoaded || !window.Razorpay) {
+        throw new Error("Unable to load Razorpay checkout.");
+      }
+
+      // Open Razorpay checkout with backend-provided order details.
+      const razorpay = new window.Razorpay({
+        key: keyId,
+        amount,
+        currency,
+        order_id: orderId,
+        name: "AiVora",
+        description: `${plan} plan purchase`,
+        handler: async (response) => {
+          try {
+            // Verify Razorpay signature after successful payment.
+            const verifyResponse = await axios.post(
+              `${Base_Url}/premium/verify`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              { withCredentials: true },
+            );
+
+            const updatedCredits =
+              verifyResponse.data?.credits ?? planCredits ?? null;
+
+            if (updatedCredits !== null) {
+              setCredits(updatedCredits);
+            }
+
+            setStatus({
+              type: "success",
+              message:
+                updatedCredits !== null
+                  ? `Payment successful. Credits updated to ${updatedCredits}.`
+                  : "Payment successful. Premium plan activated.",
+            });
+          } catch (error) {
+            setStatus({
+              type: "error",
+              message:
+                error.response?.data?.message ||
+                "Payment verification failed. Please contact support.",
+            });
+          } finally {
+            setLoadingPlan(null);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setLoadingPlan(null);
+            setStatus({
+              type: "error",
+              message: "Payment was cancelled before completion.",
+            });
+          },
+        },
+        notes: {
+          plan,
+          credits: String(planCredits ?? ""),
+        },
+      });
+
+      razorpay.open();
+    } catch (error) {
+      setLoadingPlan(null);
+      setStatus({
+        type: "error",
+        message:
+          error.response?.data?.message ||
+          error.message ||
+          "Unable to start payment right now.",
+      });
+    }
+  };
 
   return (
-    <PricingContext.Provider value={{ isMonthly, setIsMonthly }}>
+    <PricingContext.Provider
+      value={{ isMonthly, setIsMonthly, loadingPlan, status, handlePlanSelect }}
+    >
       <section
         ref={containerRef}
         onMouseMove={(event) =>
@@ -224,6 +366,23 @@ export function PricingSection({
             <p className="mt-4 text-base leading-7 text-slate-300 sm:text-lg">
               {description}
             </p>
+            {status && (
+              <p
+                className={cn(
+                  "mt-4 text-sm",
+                  status.type === "success"
+                    ? "text-emerald-300"
+                    : "text-rose-300",
+                )}
+              >
+                {status.message}
+              </p>
+            )}
+            {credits !== null && (
+              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">
+                Available credits: {credits}
+              </p>
+            )}
           </div>
 
           <PricingToggle />
@@ -328,9 +487,11 @@ function PricingToggle() {
 }
 
 function PricingCard({ plan, index }) {
-  const { isMonthly } = useContext(PricingContext);
+  const { isMonthly, loadingPlan, handlePlanSelect } =
+    useContext(PricingContext);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const amount = Number(isMonthly ? plan.price : plan.yearlyPrice);
+  const isLoading = loadingPlan === plan.plan;
 
   return (
     <motion.article
@@ -399,14 +560,27 @@ function PricingCard({ plan, index }) {
         </ul>
 
         <div className="mt-auto pt-8">
-          <ActionLink
-            href={plan.href}
-            variant={plan.isPopular ? "default" : "outline"}
-            size="lg"
-            className="w-full"
-          >
-            {plan.buttonText}
-          </ActionLink>
+          {plan.plan === "free" ? (
+            <ActionLink
+              href={plan.href}
+              variant={plan.isPopular ? "default" : "outline"}
+              size="lg"
+              className="w-full"
+            >
+              {plan.buttonText}
+            </ActionLink>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => handlePlanSelect(plan)}
+              variant={plan.isPopular ? "default" : "outline"}
+              size="lg"
+              className="w-full"
+              disabled={Boolean(loadingPlan)}
+            >
+              {isLoading ? "Processing..." : plan.buttonText}
+            </Button>
+          )}
         </div>
       </div>
     </motion.article>

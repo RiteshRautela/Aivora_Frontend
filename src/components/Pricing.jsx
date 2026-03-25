@@ -3,7 +3,9 @@ import { PricingSection } from "./PricingSection";
 const plans = [
   {
     name: "Starter",
-    price: "19",
+    price: 0,
+    credits: 100,
+    plan: "free",
     yearlyPrice: "15",
     period: "month",
     features: [
@@ -19,7 +21,9 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "49",
+    price: 499,
+    credits: 500,
+    plan: "pro",
     yearlyPrice: "39",
     period: "month",
     features: [
@@ -36,7 +40,9 @@ const plans = [
   },
   {
     name: "Enterprise",
-    price: "129",
+    price: 1499,
+    credits: 1000,
+    plan: "enterprise",
     yearlyPrice: "103",
     period: "month",
     features: [
