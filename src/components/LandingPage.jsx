@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
+import { ArrowRight, BadgeIndianRupee, Bot, Check, Eye, Globe, Link2, Pencil, Rocket, X, Zap } from 'lucide-react';
 import Login from './Login';
 
 // ─── Shader Hero (21st.dev style) ───────────────────────────────────────────
@@ -202,6 +203,21 @@ function StatsRow() {
 const scrollTo = (id) => {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
+};
+
+const featureIcons = {
+  'AI-Powered Generation': Bot,
+  'Live Preview': Eye,
+  'Built-in Editor': Pencil,
+  'One-Click Deploy': Rocket,
+  'Credit System': BadgeIndianRupee,
+  'Instant Sharing': Link2,
+};
+
+const keyFeatureIcons = {
+  'Deploy in One Click': Zap,
+  'Share Instantly': Link2,
+  'Build Any Website': Globe,
 };
 
 // ─── Main Component ──────────────────────────────────────────────────────────
@@ -429,9 +445,10 @@ const LandingPage = () => {
               whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(6,182,212,0.7)' }}
               whileTap={{ scale: 0.95 }}
               onClick={openLoginModal}
-              className="bg-gradient-to-r from-cyan-500 to-teal-500 px-10 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)]"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-teal-500 px-10 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)]"
             >
-              Get Started Free →
+              <span>Get Started Free</span>
+              <ArrowRight size={20} />
             </motion.button>
           </motion.div>
 
@@ -474,7 +491,10 @@ const LandingPage = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {keyFeatures.map((kf, idx) => (
+            {keyFeatures.map((kf, idx) => {
+              const Icon = keyFeatureIcons[kf.title] ?? Zap;
+
+              return (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
@@ -485,14 +505,17 @@ const LandingPage = () => {
                 className="relative group bg-gradient-to-br from-white/5 to-cyan-500/5 rounded-3xl border border-white/10 hover:border-cyan-500/40 p-8 transition-all duration-300 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-teal-500/0 group-hover:from-cyan-500/10 group-hover:to-teal-500/5 transition-all duration-500 rounded-3xl" />
-                <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">{kf.icon}</div>
+                <div className="mb-6 text-cyan-300 group-hover:scale-110 transition-transform duration-300">
+                  <Icon size={42} strokeWidth={1.8} />
+                </div>
                 <h3 className="text-2xl font-bold mb-3 text-white">{kf.title}</h3>
                 <p className="text-gray-400 leading-relaxed mb-5 text-sm">{kf.desc}</p>
                 <div className="inline-block bg-cyan-500/10 border border-cyan-500/30 rounded-full px-3 py-1 text-xs text-cyan-400 font-medium">
                   {kf.highlight}
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -513,23 +536,27 @@ const LandingPage = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.08 }}
-                whileHover={{ y: -6 }}
-                className="bg-white/3 p-6 rounded-2xl border border-white/10 hover:border-cyan-500/40 transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-bold mb-2 text-white">{feature.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{feature.desc}</p>
-              </motion.div>
-            ))}
+            {features.map((feature, idx) => {
+              const Icon = featureIcons[feature.title] ?? Bot;
+
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08 }}
+                  whileHover={{ y: -6 }}
+                  className="bg-white/3 p-6 rounded-2xl border border-white/10 hover:border-cyan-500/40 transition-all duration-300 group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-300 mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <Icon size={22} strokeWidth={1.8} />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-white">{feature.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -655,9 +682,10 @@ const LandingPage = () => {
               whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(6,182,212,0.5)' }}
               whileTap={{ scale: 0.95 }}
               onClick={openLoginModal}
-              className="bg-gradient-to-r from-cyan-500 to-teal-500 px-10 py-4 rounded-full font-bold text-lg relative z-10"
+              className="relative z-10 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-teal-500 px-10 py-4 rounded-full font-bold text-lg"
             >
-              Start Building Free →
+              <span>Start Building Free</span>
+              <ArrowRight size={20} />
             </motion.button>
           </motion.div>
         </div>
@@ -730,3 +758,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage
+

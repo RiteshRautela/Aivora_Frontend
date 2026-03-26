@@ -14,15 +14,12 @@ import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
 import { Slot } from "@radix-ui/react-slot";
 import { Check, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cva } from "class-variance-authority";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { useDispatch } from "react-redux";
 import { Base_Url } from "../utils/constant";
-
-function cn(...inputs) {
-  return twMerge(clsx(inputs));
-}
+import { addUser } from "../utils/userSlice";
+import { cn } from "../utils/cn";
 
 function useMediaQuery(query) {
   const [matches, setMatches] = useState(false);
@@ -225,12 +222,13 @@ export function PricingSection({
   title = "Simple, transparent pricing",
   description = "Choose the plan that matches your build speed, support needs, and scale.",
 }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isMonthly, setIsMonthly] = useState(true);
   const containerRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: null, y: null });
   const [loadingPlan, setLoadingPlan] = useState(null);
   const [status, setStatus] = useState(null);
-  const [credits, setCredits] = useState(null);
 
   const handlePlanSelect = async (selectedPlan) => {
     // Free plan skips payment flow.
@@ -285,16 +283,30 @@ export function PricingSection({
             const updatedCredits =
               verifyResponse.data?.credits ?? planCredits ?? null;
 
-            if (updatedCredits !== null) {
-              setCredits(updatedCredits);
+            try {
+              const userResponse = await axios.get(`${Base_Url}/me`, {
+                withCredentials: true,
+              });
+
+              dispatch(addUser(userResponse.data));
+            } catch (userError) {
+              console.error(
+                "Unable to refresh user after payment:",
+                userError.response?.data || userError.message,
+              );
             }
 
-            setStatus({
-              type: "success",
-              message:
-                updatedCredits !== null
-                  ? `Payment successful. Credits updated to ${updatedCredits}.`
-                  : "Payment successful. Premium plan activated.",
+            navigate("/home", {
+              replace: true,
+              state: {
+                toast: {
+                  type: "success",
+                  message:
+                    updatedCredits !== null
+                      ? `Your purchase has been confirmed. ${updatedCredits} credits are now available.`
+                      : "Your purchase has been confirmed. Premium plan is now active.",
+                },
+              },
             });
           } catch (error) {
             setStatus({
@@ -376,11 +388,6 @@ export function PricingSection({
                 )}
               >
                 {status.message}
-              </p>
-            )}
-            {credits !== null && (
-              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">
-                Available credits: {credits}
               </p>
             )}
           </div>

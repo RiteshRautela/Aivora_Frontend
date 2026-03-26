@@ -140,7 +140,10 @@ function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
                 whileHover={{ y: -6 }}
-                onClick ={() => navigate("/home/editor")}
+                onClick={() => {
+                  localStorage.setItem("lastEditorProjectId", w._id);
+                  navigate(`/home/editor/${w._id}`);
+                }}
                 className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden hover:bg-white/10 transition flex flex-col"
               >
 

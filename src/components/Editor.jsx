@@ -4,7 +4,7 @@ import { Base_Url } from "../utils/constant";
 import Header from "./Header";
 import Chat from "./Chat";
 import Spinner from "./Spinner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // 🔥 Monaco Editor
 import EditorMonaco from "@monaco-editor/react";
@@ -12,8 +12,7 @@ import EditorMonaco from "@monaco-editor/react";
 import { ArrowLeft, Rocket, MessageSquare, Code2, Monitor } from "lucide-react";
 
 const Editor = () => {
-  // const id = "69b94eff10ab332b4c3aaf46";// tic toe game it is displaying that it is deployed will solve it later
-  const id = "69b932bc37fcfab5167f6c42"; // calculator
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [website, setWebsite] = useState(null);
@@ -29,6 +28,7 @@ const Editor = () => {
   const [showCode, setShowCode] = useState(false);
   const [showFullPreview, setShowFullPreview] = useState(false);
   const editorRef = useRef(null);
+  const activeWebsiteIdRef = useRef(null);
 
   const thinkingSteps = [
     "Understanding your request…",
@@ -66,20 +66,47 @@ const Editor = () => {
 
   // 🔥 FETCH WEBSITE
   useEffect(() => {
+    if (!id) {
+      setError("Project not found.");
+      return;
+    }
+
+    localStorage.setItem("lastEditorProjectId", id);
+    activeWebsiteIdRef.current = id;
+    setWebsite(null);
+    setMessages([]);
+    setCode("");
+    setError("");
+
     const getWebsite = async () => {
       try {
         const res = await axios.get(Base_Url + "/getbyid/" + id, {
           withCredentials: true,
         });
 
+        if (activeWebsiteIdRef.current !== id) {
+          return;
+        }
+
         setWebsite(res.data);
         setMessages(res.data.conversations || []);
         setCode(res.data.latexcode);
       } catch (err) {
+        if (activeWebsiteIdRef.current !== id) {
+          return;
+        }
+
         setError(err.response?.data);
       }
     };
+
     getWebsite();
+
+    return () => {
+      if (activeWebsiteIdRef.current === id) {
+        activeWebsiteIdRef.current = null;
+      }
+    };
   }, [id]);
 
   // 🔥 THINKING LOOP
