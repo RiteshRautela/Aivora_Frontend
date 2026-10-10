@@ -97,7 +97,15 @@ const Editor = () => {
           return;
         }
 
-        setError(err.response?.data);
+        const responseMessage = err.response?.data?.message;
+        const responseText = err.response?.data;
+        setError(
+          typeof responseMessage === "string"
+            ? responseMessage
+            : typeof responseText === "string"
+              ? responseText
+              : "Unable to load this project. Please try again."
+        );
       }
     };
 
