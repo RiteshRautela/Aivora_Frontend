@@ -88,19 +88,19 @@ function Dashboard() {
 
       {/* HEADER */}
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-black/50 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-4">
             <button
               className="p-2 rounded-lg hover:bg-white/10 transition"
               onClick={() => navigate("/home")}
             >
               <ArrowLeft size={16} />
             </button>
-            <h1 className="text-lg font-semibold">Dashboard</h1>
+            <h1 className="text-base font-semibold sm:text-lg">Dashboard</h1>
           </div>
 
           <button
-            className="px-4 py-2 rounded-lg bg-white text-black text-sm font-semibold hover:scale-105 transition"
+            className="shrink-0 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-black transition hover:scale-105 sm:px-4 sm:text-sm"
             onClick={() => navigate("/home/generate")}
           >
             + New Website
@@ -109,11 +109,11 @@ function Dashboard() {
       </div>
 
       {/* CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
 
         {/* 🔥 WELCOME CARD */}
         <div className="relative mb-10 p-[1px] rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-          <div className="rounded-2xl bg-black p-6">
+          <div className="rounded-2xl bg-black p-5 sm:p-6">
             <p className="text-sm text-zinc-400">Welcome back</p>
             <h1 className="text-2xl font-bold mt-1">
               {user?.firstName || "User"} 
@@ -124,11 +124,11 @@ function Dashboard() {
         {/* TITLE */}
         <div className="mb-6">
           <p className="text-sm text-zinc-400">Your Websites</p>
-          <h2 className="text-3xl font-bold">Projects</h2>
+          <h2 className="text-2xl font-bold sm:text-3xl">Projects</h2>
         </div>
 
         {/* GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
 
           {websites.map((w, i) => {
             const copied = copiedId === w._id;
@@ -151,6 +151,8 @@ function Dashboard() {
                 <div className="relative h-40 bg-black">
                   <iframe
                     srcDoc={w.latexcode} // ✅ FIXED
+                    title={`Preview of ${w.title}`}
+                    sandbox="allow-scripts"
                     className="absolute inset-0 w-[140%] h-[140%] scale-[0.72] origin-top-left pointer-events-none bg-white"
                   />
                   <div className="absolute inset-0 bg-black/30" />

@@ -6,7 +6,8 @@ const plans = [
     price: 0,
     credits: 100,
     plan: "free",
-    yearlyPrice: "15",
+    yearlyPrice: 0,
+    yearlyTotal: 0,
     period: "month",
     features: [
       "50 AI site generations per month",
@@ -24,7 +25,8 @@ const plans = [
     price: 499,
     credits: 500,
     plan: "pro",
-    yearlyPrice: "39",
+    yearlyPrice: 399,
+    yearlyTotal: 4788,
     period: "month",
     features: [
       "Unlimited generations and revisions",
@@ -43,7 +45,8 @@ const plans = [
     price: 1499,
     credits: 1000,
     plan: "enterprise",
-    yearlyPrice: "103",
+    yearlyPrice: 1199,
+    yearlyTotal: 14388,
     period: "month",
     features: [
       "Everything in Pro",
@@ -53,8 +56,8 @@ const plans = [
       "Dedicated launch planning support",
     ],
     description: "For product teams that need governance, scale, and a partner for larger rollouts.",
-    buttonText: "Contact Sales",
-    href: "mailto:hello@aivora.in",
+    buttonText: "Upgrade to Enterprise",
+    href: "/home/generate",
   },
 ];
 

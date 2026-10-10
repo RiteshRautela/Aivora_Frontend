@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CircleAlert } from "lucide-react";
 
 function Generate() {
-  const [prompt, setPrompt] = useState("Generate a calculator");
+  const [prompt, setPrompt] = useState("");
   const [alert, setAlert] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const user = useSelector((state) => state.user);
@@ -34,21 +34,30 @@ function Generate() {
     payload?.id ??
     payload?.website?._id ??
     payload?.website?.id ??
+    (typeof payload?.website === "string" ? payload.website : null) ??
     payload?.project?._id ??
     payload?.project?.id ??
     payload?.data?._id ??
     payload?.data?.id ??
     null;
 
-  const handleGenerate = async() =>{
-   if (hasNoCredits || isGenerating) {
-    return;
-   }
+  const handleGenerate = async () => {
+    const normalizedPrompt = prompt.trim();
+    if (hasNoCredits || isGenerating) {
+      return;
+    }
+    if (!normalizedPrompt) {
+      setAlert({
+        type: "error",
+        message: "Describe what you want to create first.",
+      });
+      return;
+    }
 
-   setIsGenerating(true);
+    setIsGenerating(true);
 
    try {
-    const res =  await axios.post(Base_Url+"/generate", {prompt} ,  {withCredentials: true})
+    const res =  await axios.post(Base_Url+"/generate", { prompt: normalizedPrompt } ,  {withCredentials: true})
     const createdWebsiteId = getCreatedWebsiteId(res.data);
 
     try {
@@ -72,16 +81,26 @@ function Generate() {
 
     navigate("/home/dashboard");
    } catch (err) {
-      console.error("generate failed:", err.response?.data);
+      console.error("Generate request failed:", err.response?.data || err.message);
       if (err.response?.status === 403) {
         setAlert({
           type: "error",
-          message: "Not enough credits to generate a website.",
+          message: "Not enough credits to create another project.",
         });
 
         window.setTimeout(() => {
           navigate("/home/price");
         }, 900);
+      } else if ([429, 503].includes(err.response?.status)) {
+        setAlert({
+          type: "error",
+          message: "The AI service is busy right now. Please try again shortly.",
+        });
+      } else {
+        setAlert({
+          type: "error",
+          message: "We couldn't create that yet. Please try again.",
+        });
       }
    } finally {
       setIsGenerating(false);
@@ -96,7 +115,7 @@ function Generate() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-24">
+    <div className="flex min-h-screen flex-col items-center bg-black px-4 pb-12 pt-16 text-white sm:px-6 sm:pt-24">
       <AnimatePresence>
         {alert && (
           <motion.div
@@ -119,12 +138,12 @@ function Generate() {
         )}
       </AnimatePresence>
 
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold">
-          Build Websites with  Ai Avora
+      <div className="mb-8 w-full max-w-4xl text-center sm:mb-10">
+        <h1 className="text-2xl font-bold sm:text-3xl">
+          Build with AiVora
         </h1>
-        <p className="text-zinc-400">
-          This process may take several minutes, Aviro Ai focuses on quality, not shortcuts.
+        <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-400 sm:text-base">
+          Describe a website, app, calculator, or tool and let AI build it for you.
         </p>
         <p className="mt-3 text-sm text-zinc-300">
           Available credits: <span className="font-semibold text-white">{credits}</span>
@@ -133,34 +152,34 @@ function Generate() {
 
       <div className="w-full max-w-4xl">
 
-        <h1 className="text-3xl font-bold mb-6">
-          Generate Website
+        <h1 className="mb-5 text-2xl font-bold sm:mb-6 sm:text-3xl">
+          What would you like to build?
         </h1>
 
         <textarea
-          className="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-700 resize-none overflow-hidden"
-          placeholder="Describe the website you want..."
+          className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-base resize-none overflow-hidden"
+          placeholder="Describe the website, app, calculator, or tool you want..."
           value={prompt}
           rows={1}
           onChange={handleInput}
         />
 
         <button
-          className="mx-[39%] mt-4 px-10 py-3 rounded-2xl bg-white text-black transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-300 disabled:hover:bg-zinc-700"
+          className="mt-4 w-full rounded-2xl bg-white px-8 py-3 text-black transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-300 disabled:hover:bg-zinc-700 sm:w-auto"
           onClick={ handleGenerate}
           disabled={hasNoCredits || isGenerating}
         >
-          {isGenerating ? "Generating..." : "Generate"}
+          {isGenerating ? "Creating..." : "Create project"}
         </button>
         {isGenerating && (
           <div className="mt-4 flex items-center justify-center gap-3 text-sm text-zinc-300">
             <span className="loading loading-dots loading-xs"></span>
-            <span>Generating your website...</span>
+            <span>Building your project...</span>
           </div>
         )}
         {hasNoCredits && (
           <p className="mt-3 text-center text-sm text-amber-300">
-            You need more credits before generating another website.
+            You need more credits before creating another project.
           </p>
         )}
 

@@ -47,22 +47,22 @@ function Navbar() {
 
   return (
     <>
-      <div className="navbar relative z-[120] bg-gradient-to-b from-black/90 to-transparent text-neutral-content">
+      <div className="navbar relative z-[120] min-h-14 bg-gradient-to-b from-black/90 to-transparent px-2 text-neutral-content sm:px-4">
 
         <div className="flex-1">
-          <Link to="/home" className="btn btn-ghost text-xl">
+          <Link to="/home" className="btn btn-ghost px-2 text-lg sm:text-xl">
             Aivora
           </Link>
         </div>
-        <div className="flex gap-2">
-          <div className="mr-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-1.5 text-sm font-semibold transition hover:scale-105">
-            <Coins size={16} />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <div className="mr-1 flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-2.5 py-1.5 text-xs font-semibold transition sm:mr-2 sm:gap-2 sm:px-4 sm:text-sm">
+            <Coins size={14} className="sm:h-4 sm:w-4" />
             <span>{credits}</span>
           </div>
 
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
+              <div className="w-8 rounded-full sm:w-10">
                 <img
                   alt="Tailwind CSS Navbar component"
                   src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"

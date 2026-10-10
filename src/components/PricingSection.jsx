@@ -245,7 +245,7 @@ export function PricingSection({
         `${Base_Url}/payment/create`,
         {
           plan: selectedPlan.plan,
-          billingCycle: isMonthly ? "monthly" : "annual",
+          billingCycle: isMonthly ? "monthly" : "yearly",
         },
         { withCredentials: true },
       );
@@ -357,7 +357,7 @@ export function PricingSection({
           setMousePosition({ x: event.clientX, y: event.clientY })
         }
         onMouseLeave={() => setMousePosition({ x: null, y: null })}
-        className="relative isolate overflow-hidden bg-[#020617] px-4 py-20 text-white sm:px-6 lg:px-8"
+        className="relative isolate overflow-hidden bg-[#020617] px-3 py-14 text-white sm:px-6 sm:py-20 lg:px-8"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_34%),linear-gradient(180deg,_rgba(10,10,10,0.45),_rgba(0,0,0,1))]" />
         <div className="absolute left-1/2 top-24 h-64 w-64 -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
@@ -372,10 +372,10 @@ export function PricingSection({
               <Sparkles className="h-3.5 w-3.5" />
               AiVora Pricing
             </p>
-            <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+            <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">
               {title}
             </h2>
-            <p className="mt-4 text-base leading-7 text-slate-300 sm:text-lg">
+            <p className="mt-4 text-sm leading-6 text-slate-300 sm:text-base sm:leading-7 md:text-lg">
               {description}
             </p>
             {status && (
@@ -394,7 +394,7 @@ export function PricingSection({
 
           <PricingToggle />
 
-          <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-start">
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:mt-12 sm:gap-8 lg:grid-cols-3 lg:items-start">
             {plans.map((plan, index) => (
               <PricingCard key={plan.name} plan={plan} index={index} />
             ))}
@@ -516,7 +516,7 @@ function PricingCard({ plan, index }) {
         damping: 20,
       }}
       className={cn(
-        "relative flex h-full flex-col rounded-[28px] border p-8 backdrop-blur-xl",
+        "relative flex h-full flex-col rounded-[28px] border p-5 backdrop-blur-xl sm:p-8",
         plan.isPopular
           ? "border-white/40 bg-white/[0.08] shadow-[0_20px_60px_rgba(255,255,255,0.08)]"
           : "border-white/10 bg-white/[0.04]",
@@ -535,12 +535,13 @@ function PricingCard({ plan, index }) {
         </p>
 
         <div className="mt-8 flex items-end justify-center gap-1 text-center">
-          <div className="text-5xl font-bold tracking-tight text-white">
+          <div className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
             <NumberFlow
               value={amount}
               format={{
                 style: "currency",
-                currency: "USD",
+                currency: "INR",
+                maximumFractionDigits: 0,
                 minimumFractionDigits: 0,
               }}
               className="tabular-nums"
@@ -552,7 +553,15 @@ function PricingCard({ plan, index }) {
         </div>
 
         <p className="mt-2 text-center text-xs uppercase tracking-[0.2em] text-slate-500">
-          {isMonthly ? "Billed monthly" : "Billed annually"}
+          {plan.plan === "free"
+            ? "No payment required"
+            : isMonthly
+              ? "Billed monthly"
+              : `Billed annually · ${new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 0,
+                }).format(plan.yearlyTotal)} per year`}
         </p>
 
         <ul className="mt-8 space-y-3 text-sm text-slate-300">

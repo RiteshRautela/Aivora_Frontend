@@ -5,18 +5,18 @@ const HomeHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center text-center">
+    <div className="flex min-h-[calc(100dvh-4rem)] flex-col items-center justify-center bg-black px-5 py-12 text-center text-white">
 
-      <h1 className="text-5xl font-bold mb-4">
+      <h1 className="mb-4 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
         Build stunning websites <span className="text-purple-400">with AI</span>
       </h1>
 
-      <p className="text-zinc-400 mb-8">
+      <p className="mb-8 max-w-xl text-sm text-zinc-400 sm:text-base">
         Describe your idea and let AI generate a modern website.
       </p>
 
       <button
-        className="px-6 py-3 bg-white text-black rounded-lg font-semibold hover:scale-105 transition"
+        className="rounded-lg bg-white px-6 py-3 font-semibold text-black transition hover:scale-105"
         onClick={() => navigate("/home/generate")}
       >
         Generate Website

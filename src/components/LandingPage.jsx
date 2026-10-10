@@ -170,7 +170,6 @@ function TypingText({ words }) {
   return (
     <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
       {displayed}
-      <span className="animate-pulse text-cyan-400">|</span>
     </span>
   );
 }
@@ -187,7 +186,7 @@ function StatsRow() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1, duration: 0.6 }}
-      className="flex gap-10 justify-center mt-12"
+      className="mt-8 flex justify-center gap-5 sm:mt-12 sm:gap-10"
     >
       {stats.map((s, i) => (
         <div key={i} className="text-center">
@@ -417,7 +416,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.9, ease: 'easeOut' }}
-            className="text-6xl md:text-8xl font-bold mb-4 leading-tight"
+            className="mb-4 text-4xl font-bold leading-tight sm:text-6xl md:text-8xl"
             style={{ textShadow: '0 0 40px rgba(6,182,212,0.5)' }}
           >
             <span className="text-white">Build with</span>
@@ -429,7 +428,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-gray-200 sm:mb-10 sm:text-lg md:text-xl"
             style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
           >
             Describe your vision in plain English. AiVora's AI turns it into a production-ready website — in seconds, not months.
@@ -445,7 +444,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(6,182,212,0.7)' }}
               whileTap={{ scale: 0.95 }}
               onClick={openLoginModal}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-teal-500 px-10 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)]"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 px-7 py-3 text-base font-bold shadow-[0_0_30px_rgba(6,182,212,0.4)] sm:px-10 sm:py-4 sm:text-lg"
             >
               <span>Get Started Free</span>
               <ArrowRight size={20} />
@@ -482,7 +481,7 @@ const LandingPage = () => {
             className="text-center mb-16"
           >
             <p className="text-cyan-400 text-sm font-medium tracking-widest uppercase mb-3">Why AiVora</p>
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
+            <h2 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl">
               Everything you need,{' '}
               <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                 nothing you don't
@@ -530,7 +529,7 @@ const LandingPage = () => {
             className="text-center mb-16"
           >
             <p className="text-cyan-400 text-sm font-medium tracking-widest uppercase mb-3">What you get</p>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent sm:text-4xl md:text-5xl">
               Powerful Features
             </h2>
           </motion.div>
@@ -571,7 +570,7 @@ const LandingPage = () => {
             className="text-center mb-16"
           >
             <p className="text-cyan-400 text-sm font-medium tracking-widest uppercase mb-3">Simple process</p>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent sm:text-4xl md:text-5xl">
               How It Works
             </h2>
           </motion.div>
@@ -612,12 +611,12 @@ const LandingPage = () => {
             className="text-center mb-16"
           >
             <p className="text-cyan-400 text-sm font-medium tracking-widest uppercase mb-3">Transparent pricing</p>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent sm:text-4xl md:text-5xl">
               Simple Pricing
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+          <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2 xl:grid-cols-3 md:gap-8">
             {pricing.map((plan, idx) => (
               <motion.div
                 key={idx}
@@ -626,9 +625,9 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.15 }}
                 whileHover={{ y: -8 }}
-                className={`relative p-8 rounded-2xl border transition-all duration-300 ${
+                className={`relative rounded-2xl border p-5 transition-all duration-300 sm:p-8 ${
                   plan.popular
-                    ? 'bg-gradient-to-br from-cyan-500/15 to-teal-500/10 border-cyan-500/60 shadow-[0_0_40px_rgba(6,182,212,0.15)] scale-105'
+                    ? 'bg-gradient-to-br from-cyan-500/15 to-teal-500/10 border-cyan-500/60 shadow-[0_0_40px_rgba(6,182,212,0.15)] md:scale-105'
                     : 'bg-white/3 border-white/10 hover:border-cyan-500/30'
                 }`}
               >
@@ -638,7 +637,7 @@ const LandingPage = () => {
                   </div>
                 )}
                 <h3 className="text-xl font-bold mb-1 text-gray-300">{plan.name}</h3>
-                <div className="text-5xl font-bold mb-1 text-white">{plan.price}</div>
+                <div className="mb-1 text-4xl font-bold text-white sm:text-5xl">{plan.price}</div>
                 <p className="text-cyan-400/70 text-sm mb-6">{plan.credits}</p>
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((f, i) => (
@@ -673,16 +672,16 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-teal-500/5 p-12 text-center overflow-hidden"
+            className="relative overflow-hidden rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-teal-500/5 p-6 text-center sm:p-12"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-teal-500/5 animate-pulse pointer-events-none" />
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 relative z-10">Ready to build?</h2>
+            <h2 className="relative z-10 mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">Ready to build?</h2>
             <p className="text-gray-400 mb-8 relative z-10">Start for free. No credit card required.</p>
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(6,182,212,0.5)' }}
               whileTap={{ scale: 0.95 }}
               onClick={openLoginModal}
-              className="relative z-10 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-teal-500 px-10 py-4 rounded-full font-bold text-lg"
+              className="relative z-10 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 px-7 py-3 text-base font-bold sm:px-10 sm:py-4 sm:text-lg"
             >
               <span>Start Building Free</span>
               <ArrowRight size={20} />

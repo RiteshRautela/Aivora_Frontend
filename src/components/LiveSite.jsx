@@ -44,7 +44,7 @@ function LiveSite() {
       title="Live Site"
       srcDoc={html}
       className="w-screen h-screen border-none"
-      sandbox="allow-scripts allow-same-origin allow-forms"
+      sandbox="allow-scripts"
     />
   );
 }

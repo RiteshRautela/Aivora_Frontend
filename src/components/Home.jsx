@@ -46,7 +46,11 @@ function Home() {
 
         dispatch(addUser(res.data));
       } catch (err) {
-        navigate("/"); 
+        if (err.response?.status === 401) {
+          navigate("/login");
+          return;
+        }
+        console.error("Failed to load current user:", err);
       }
     };
 

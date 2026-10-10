@@ -68,8 +68,14 @@ function Login({ onSuccess }) {
   };
 
   return (
-    <div className="flex justify-center">
-      <div className="card w-96 rounded-2xl border border-cyan-500/30 bg-slate-950/95 text-slate-100 shadow-[0_12px_50px_rgba(6,182,212,0.2)]">
+    <div
+      className={
+        onSuccess
+          ? "flex justify-center px-4"
+          : "flex min-h-svh items-center justify-center px-4 py-8"
+      }
+    >
+      <div className="card w-full max-w-sm rounded-2xl border border-cyan-500/30 bg-slate-950/95 text-slate-100 shadow-[0_12px_50px_rgba(6,182,212,0.2)]">
         <div className="card-body">
           <h2 className="card-title justify-center text-cyan-300"> 
             {isLogInForm ? "Login" : "SignUp"}

@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 // 🔥 Monaco Editor
 import EditorMonaco from "@monaco-editor/react";
 
-import { ArrowLeft, Rocket, MessageSquare, Code2, Monitor } from "lucide-react";
+import { ArrowLeft, Rocket, MessageSquare, Code2, Monitor, X } from "lucide-react";
 
 const Editor = () => {
   const { id } = useParams();
@@ -27,6 +27,7 @@ const Editor = () => {
   // 🔥 toggle preview / code
   const [showCode, setShowCode] = useState(false);
   const [showFullPreview, setShowFullPreview] = useState(false);
+  const [showMobileChat, setShowMobileChat] = useState(false);
   const editorRef = useRef(null);
   const activeWebsiteIdRef = useRef(null);
 
@@ -191,16 +192,16 @@ const Editor = () => {
 
   if (showFullPreview) {
     return (
-      <div className="h-screen w-screen bg-black">
-        <div className="h-14 px-4 flex justify-between items-center border-b border-white/10 bg-black text-white">
-          <div className="flex items-center gap-3">
+      <div className="h-[100dvh] w-screen bg-black">
+        <div className="flex h-14 items-center justify-between border-b border-white/10 bg-black px-2 text-white sm:px-4">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <button
               className="p-2 rounded-lg hover:bg-white/10 transition"
               onClick={() => setShowFullPreview(false)}
             >
               <ArrowLeft size={18} />
             </button>
-            <span className="text-sm text-zinc-300">Preview Mode</span>
+            <span className="truncate text-sm text-zinc-300">Preview Mode</span>
           </div>
 
           <button
@@ -214,7 +215,7 @@ const Editor = () => {
         <iframe
           title="Full Preview"
           srcDoc={code || ""}
-          sandbox="allow-scripts allow-same-origin allow-forms"
+          sandbox="allow-scripts"
           className="w-full h-[calc(100vh-56px)] bg-white border-none"
         />
       </div>
@@ -222,7 +223,7 @@ const Editor = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex bg-black text-white overflow-hidden">
+    <div className="relative flex h-[100dvh] w-screen overflow-hidden bg-black text-white">
 
       {/* LEFT CHAT PANEL */}
       <aside className="hidden lg:flex w-[480px] flex-col border-r border-white/10 bg-black/80">
@@ -240,36 +241,40 @@ const Editor = () => {
       </aside>
 
       {/* RIGHT SIDE */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
 
         {/* TOP BAR */}
-        <div className="h-14 px-4 flex justify-between items-center border-b border-white/10 bg-black/80">
-          <span className="text-xs text-zinc-400">Live Preview</span>
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 bg-black/80 px-2 sm:px-4">
+          <span className="truncate text-xs text-zinc-400">Live Preview</span>
 
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-3">
             {!website.deployed && (
               <button
-                className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 text-sm font-semibold hover:scale-105 transition"
+                className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-2 py-1.5 text-xs font-semibold transition hover:scale-105 sm:gap-2 sm:px-4 sm:text-sm"
                 onClick={handleDeploy}
               >
-                <Rocket size={14} /> Deploy
+                <Rocket size={14} /> <span className="hidden sm:inline">Deploy</span>
               </button>
             )}
 
-            <button className="p-2 lg:hidden">
-              <MessageSquare size={18} />
+            <button
+              className="rounded-lg p-2 hover:bg-white/10 lg:hidden"
+              onClick={() => setShowMobileChat((visible) => !visible)}
+              aria-label={showMobileChat ? "Close project chat" : "Open project chat"}
+            >
+              {showMobileChat ? <X size={18} /> : <MessageSquare size={18} />}
             </button>
 
             {/* 🔥 TOGGLE CODE VIEW */}
             <button
-              className="p-2"
+              className="rounded-lg p-2 hover:bg-white/10"
               onClick={() => setShowCode((prev) => !prev)}
             >
               <Code2 size={18} />
             </button>
 
             <button
-              className="p-2"
+              className="rounded-lg p-2 hover:bg-white/10"
               onClick={() => setShowFullPreview(true)}
             >
               <Monitor size={18} />
@@ -305,13 +310,28 @@ const Editor = () => {
             <iframe
               title="Editor Preview"
               srcDoc={code || ""}
-              sandbox="allow-scripts allow-same-origin allow-forms"
+              sandbox="allow-scripts"
               className="w-full h-full bg-white border-none"
             />
           )}
 
         </div>
       </div>
+
+      {showMobileChat && (
+        <aside className="absolute inset-x-0 bottom-0 top-14 z-30 flex flex-col border-t border-white/10 bg-black lg:hidden">
+          <Header title={website.title} />
+          <Chat
+            messages={messages}
+            prompt={prompt}
+            setPrompt={setPrompt}
+            handleUpdate={handleUpdate}
+            updateLoading={updateLoading}
+            thinkingSteps={thinkingSteps}
+            thinkingIndex={thinkingIndex}
+          />
+        </aside>
+      )}
     </div>
   );
 };
